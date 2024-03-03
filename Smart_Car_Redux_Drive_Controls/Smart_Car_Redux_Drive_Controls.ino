@@ -47,7 +47,6 @@ void setup() {
   digitalWrite(MOTOR_RR_1, LOW);
   digitalWrite(MOTOR_RR_2, LOW);
   
-
   Serial.begin(9600);
 }
 
@@ -56,64 +55,86 @@ void loop() {
 
   // Ramp speed up.
   for (int i = 0; i < 11; i++) {
-    setMotorSpeedAndDelay(25*i, 25*i, 500);
+    setFourWheelDriveSpeedAndDelay(25*i, 500);
   }
   // Full speed forward.
-  setMotorSpeedAndDelay(255,255,2000);
+  setFourWheelDriveSpeedAndDelay(255, 2000);
 
   // Ramp speed into full reverse.
   for (int i = 0; i < 21 ; i++) {
-    setMotorSpeedAndDelay(255 - 25*i, 255 - 25*i, 500);
+    setFourWheelDriveSpeedAndDelay(255 - 25*i, 500);
   }
 
   // Full speed reverse.
-  setMotorSpeedAndDelay(-255,-255,2000);
+  setFourWheelDriveSpeedAndDelay(-255, 2000);
 
   // Stop.
-  setMotorSpeedAndDelay(0,0,2000);
+  setFourWheelDriveSpeedAndDelay(0, 2000);
 
   // Full speed, forward, turn, reverse, and turn for a two-wheeled base.
-  setMotorSpeedAndDelay(255, 255, 2000);
-  setMotorSpeedAndDelay(0, 0, 1000);
-  setMotorSpeedAndDelay(-255, 255, 2000);
-  setMotorSpeedAndDelay(0, 0, 1000);
-  setMotorSpeedAndDelay(-255, -255, 2000);
-  setMotorSpeedAndDelay(0, 0, 1000);
-  setMotorSpeedAndDelay(255, -255, 2000);
-  setMotorSpeedAndDelay(0, 0, 1000);
+  setFourWheelDriveSpeedAndDelay(255, 2000);
+  setFourWheelDriveSpeedAndDelay(0, 1000);
+  setFourWheelDriveSpeedAndDelay(-255, 2000);
+  setFourWheelDriveSpeedAndDelay(0, 1000);
+  setFourWheelDriveSpeedAndDelay(-255, 2000);
+  setFourWheelDriveSpeedAndDelay(0, 1000);
+  setFourWheelDriveSpeedAndDelay(255, 2000);
+  setFourWheelDriveSpeedAndDelay(0, 1000);
 
   // and repeat
 }
 
 /*
+  Initialize motor parameters
+*/
+void motorInit() {
+  motorLF.speed = 0;
+  motorRF.speed = 0;
+  motorLR.speed = 0;
+  motorRR.speed = 0;
+
+  // Left Front motor pin configurations
+  motorLF.motorOutputs.pinA = MOTOR_LF_1;
+  motorLF.motorOutputs.pinB = MOTOR_LF_2;
+
+  // Right Front motor pin configurations
+  motorRF.motorOutputs.pinA = MOTOR_RF_1;
+
+
+}
+
+/*
   Send a PWM value to a motor to drive it at a certain speed
 */
-void setMotorPWM(int pwm, int IN1_PIN, int IN2_PIN) {
+void setMotorPWM(int16_t pwm, motorControl_t motor) {
   if (pwm < 0) {  // reverse speeds
-    analogWrite(IN1_PIN, -pwm);
-    digitalWrite(IN2_PIN, LOW);
-
+    analogWrite(motor.motorOutputs.pinA, -pwm);
+    digitalWrite(motor.motorOutputs.pinB, LOW);
   } else { // stop or forward
-    digitalWrite(IN1_PIN, LOW);
-    analogWrite(IN2_PIN, pwm);
+    digitalWrite(motor.motorOutputs.pinA, LOW);
+    analogWrite(motor.motorOutputs.pinB, pwm);
   }
 }
 
-void setMotorSpeed(int pwm_A, int pwm_B) {
-  setMotorPWM(pwm_A, MOTOR_LF_1, MOTOR_LF_2);
-  setMotorPWM(pwm_A, MOTOR_RF_1, MOTOR_RF_2);
-  setMotorPWM(pwm_B, MOTOR_LR_1, MOTOR_LR_2);
-  setMotorPWM(pwm_B, MOTOR_RR_1, MOTOR_RR_2);
+/*
+  Set the speed of all 4 motors
+*/
+void setFourWheelDriveSpeed(uint16_t pwm) {
+  setMotorPWM(pwm, motorLF);
+  setMotorPWM(pwm, motorRF);
+  setMotorPWM(pwm, motorLR);
+  setMotorPWM(pwm, motorRR);
 
   // Print a status message to the console.
-  Serial.print("Set motor A PWM = ");
-  Serial.print(pwm_A);
-  Serial.print(" motor B PWM = ");
-  Serial.println(pwm_B);
+  Serial.print("Set motor PWM = ");
+  Serial.print(pwm);
 }
 
-void setMotorSpeedAndDelay(int pwm_A, int pwm_B, int duration) {
-  setMotorSpeed(pwm_A, pwm_B);
+/*
+  Set the speed of all 4 motors for a set amount of time
+*/
+void setFourWheelDriveSpeedAndDelay(uint16_t pwm, uint32_t duration) {
+  setFourWheelDriveSpeed(pwm);
   delay(duration);
 }
 

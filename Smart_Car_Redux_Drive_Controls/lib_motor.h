@@ -28,17 +28,15 @@ typedef enum direction_t {
   RIGHT_DRIVE
 } direction_t;
 
-// Enum for the 4 motors
-typedef enum motor_t {
-  MOTOR_LF,
-  MOTOR_RF,
-  MOTOR_LR,
-  MOTOR_RR
-} motor_t;
+// Struct to define the 4 motors' pins
+typedef struct motorOutputs_t {
+  uint16_t pinA;
+  uint16_t pinB;
+} motorOutputs_t;
 
 // Motor typedef to store attributes
 typedef struct motorControl_t {
-  motor_t motor;
+  motorOutputs_t motorOutputs;
   int16_t speed; // Speed in PWM
   direction_t direction;
 } motorControl_t;
