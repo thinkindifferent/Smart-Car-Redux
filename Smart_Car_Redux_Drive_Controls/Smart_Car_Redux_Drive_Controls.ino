@@ -99,8 +99,15 @@ void motorInit() {
 
   // Right Front motor pin configurations
   motorRF.motorOutputs.pinA = MOTOR_RF_1;
+  motorRF.motorOutputs.pinB = MOTOR_RF_2;
 
+  // Left Rear motor pin configurations
+  motorLR.motorOutputs.pinA = MOTOR_LR_1;
+  motorLR.motorOutputs.pinB = MOTOR_LR_2;
 
+  // Right Rear motor pin configurations
+  motorRR.motorOutputs.pinA = MOTOR_RR_1;
+  motorRR.motorOutputs.pinB = MOTOR_RR_2;
 }
 
 /*
